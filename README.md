@@ -42,6 +42,13 @@ A specific CNN architecture inspired by VGG-Net, optimized for the 128x128 input
 * **Parameter Reduction:** Utilizes **Global Average Pooling (GAP)** instead of fully connected layers to minimize parameter count and reduce model size.
 * **Loss Function:** `LabelSmoothingCrossEntropy` is used to handle noisy labels and improve calibration.
 
+## 💾 Dataset
+
+This project relies on the **RAF-DB (Real-world Affective Faces Database)**. Due to file size limits, the dataset is not included in this repository.
+
+1.  **Download the dataset** from Kaggle: [RAF-DB Dataset](https://www.kaggle.com/datasets/shuvoalok/raf-db-dataset)
+2.  **Extract the files** into a folder named `DATA` in the project's root directory.
+    * *Ensure the structure allows the `Custom_Emotion_Classification.ipynb` notebook to access the images correctly.*
 ---
 
 ## 🛠️ Installation & Setup
@@ -53,8 +60,8 @@ A specific CNN architecture inspired by VGG-Net, optimized for the 128x128 input
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/your-username/emotion-music-player.git](https://github.com/your-username/emotion-music-player.git)
-cd emotion-music-player
+git clone [https://github.com/m-o-a-z-e/AI_DJ_Mood.git](https://github.com/m-o-a-z-e/AI_DJ_Mood.git)
+    cd AI_DJ_Mood
 ```
 ### 2. Install Dependencies
 ```bash
