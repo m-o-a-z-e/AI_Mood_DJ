@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Mood DJ - Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav>
+        <div class="logo">
+            <i class="fas fa-wave-square"></i> AI Mood DJ
+        </div>
+        <div class="nav-links">
+            <a onclick="showSection('home')" class="nav-link active-link" id="link-home">Home</a>
+            <a onclick="showSection('team')" class="nav-link" id="link-team">Team</a>
+            
+            {% if current_user.is_authenticated %}
+                <span class="nav-user-name">Hi, {{ current_user.username }}</span>
+                <a href="{{ url_for('experience') }}" class="cta-btn-small">Go to Experience </a>
+                <a href="{{ url_for('logout') }}" class="nav-link" style="color: #ff4444;">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="nav-link" style="color: var(--primary);">Login</a>
+                <a href="{{ url_for('register') }}" class="cta-btn-small">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <section id="home" class="section active">
+        <div class="hero-content">
+            <h1 class="title">Your Mood. Your Music. Instant Sync</h1>
+            <p class="hero-desc">
+                Forget the search bar. Let your emotions curate the perfect Spotify mix in real-time. Simply look, and listen.
+            </p>
+            
+            <div class="hero-actions">
+                <div class="hero-image-container">
+                    <img src="https://images.unsplash.com/photo-1614149162883-504ce4d13909?q=80&w=2574&auto=format&fit=crop" 
+                          alt="AI Music Vibe" class="hero-image">
+                </div>
+                
+                <a href="{{ url_for('experience') }}" class="cta-btn">
+                    Launch Experience <i class="fas fa-rocket" style="margin-left: 10px;"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="team" class="section">
+        <h2 style="font-size: 2.5em; margin-bottom: 50px; color: #fff; text-align: center;">The Innovators</h2>
+        
+        <div class="team-grid">
+            
+            <div class="team-card">
+                <div class="avatar"><i class="fas fa-robot"></i></div>
+                <h3 class="member-name">Moaz Hany</h3>
+                <p class="member-role">Team Lead & Full Stack AI Engineer</p>
+                <p class="member-desc">
+                    Orchestrated the project integration, fixed critical bugs, and developed the backend logic bridging the AI model with Spotify API. Designed the UI/UX.
+                </p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/moaz-hany-ab5172324/" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://github.com/m-o-a-z-e" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+
+            <div class="team-card">
+                <div class="avatar"><i class="fas fa-database"></i></div>
+                <h3 class="member-name">Mohamed Tamer</h3>
+                <p class="member-role">Data Engineer</p>
+                <p class="member-desc">
+                    Handled the data pipeline foundation. Curated, cleaned, and preprocessed the dataset to ensure high-quality inputs, implementing robust augmentation.
+                </p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/mohamed-tamer-40b4462b5/" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+
+            <div class="team-card">
+                <div class="avatar"><i class="fas fa-video"></i></div>
+                <h3 class="member-name">Nour Mohamed</h3>
+                <p class="member-role">Computer Vision Engineer</p>
+                <p class="member-desc">
+                    Developed the real-time inference engine using OpenCV. Optimized the video processing pipeline to ensure smooth, low-latency emotion detection.
+                </p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/nour-gomaa-a23a662b0/" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+
+            <div class="team-card">
+                <div class="avatar"><i class="fas fa-brain"></i></div>
+                <h3 class="member-name">Asmahan Saad</h3>
+                <p class="member-role">AI Architect</p>
+                <p class="member-desc">
+                    Designed the custom Deep CNN architecture. Engineered the model layers to efficiently extract facial features for accurate emotion classification.
+                </p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/asmahan-saad-201057375/" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+
+            <div class="team-card">
+                <div class="avatar"><i class="fas fa-cogs"></i></div>
+                <h3 class="member-name">Hager Moustafa</h3>
+                <p class="member-role">Machine Learning Engineer</p>
+                <p class="member-desc">
+                    Implemented the training pipeline and optimization strategy. Managed training loops, loss functions, and hyperparameter tuning.
+                </p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/hagar-mostafa-296b2a2b7/" target="_blank" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 AI Mood DJ Project. Built with <span><i class="fas fa-heart"></i></span> and PyTorch.</p>
+    </footer>
+
+    <script>
+        function showSection(sectionId) {
+            // 1. إخفاء كل السكاشن
+            document.querySelectorAll('.section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+
+            // 2. إظهار السكشن المطلوب
+            document.getElementById(sectionId).classList.add('active');
+
+            // 3. تحديث النافبار (الخط اللي تحت الكلمة)
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active-link');
+            });
+            
+            // تفعيل اللينك المضغوط عليه
+            document.getElementById('link-' + sectionId).classList.add('active-link');
+        }
+    </script>
+</body>
+</html>

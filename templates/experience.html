@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experience - AI Mood DJ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav>
+        <div class="logo"><i class="fas fa-wave-square"></i> AI Mood DJ</div>
+        <div class="nav-links">
+            <span style="color: #00ffcc; margin-right: 15px; font-weight: bold;">
+                <i class="fas fa-user"></i> Hello, {{ name }}
+            </span>
+            <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+            <a href="{{ url_for('logout') }}" class="nav-link" style="color: #ff4444;">Logout</a>
+        </div>
+    </nav>
+
+    <section class="section active" style="display: flex; margin-top: 20px;">
+        <h2 style="font-size: 2.5em; margin-bottom: 10px; font-weight: 700;">Live Detection</h2>
+        <p style="color: #aaa; margin-bottom: 40px;">Press Start to let the AI analyze your vibe</p>
+        
+        <div class="app-layout">
+            
+            <div class="video-wrapper">
+                <div class="video-container">
+                    <div id="camera-overlay" class="camera-overlay">
+                        <i class="fas fa-fingerprint camera-placeholder-icon"></i>
+                        <p class="overlay-text">Waiting for your vibe...</p>
+                    </div>
+                    <img id="video-feed" src="" alt="Webcam Feed" class="video-feed">
+                </div>
+            </div>
+
+            <div class="controls-wrapper">
+                
+                <div class="control-btns">
+                    <button onclick="toggleCamera()" class="spotify-btn btn-toggle" id="btn-toggle">
+                        <i class="fas fa-play"></i> Start Experience
+                    </button>
+                    
+                    <button onclick="takeSnapshot()" class="spotify-btn btn-snap" id="btn-snap" title="Take Snapshot" style="display: none;">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                </div>
+
+                <div id="status">Camera is off</div>
+                
+                <div class="therapy-selector">
+                    <p class="control-label" style="color: #d8b4fe;">AI Strategy:</p>
+                    <div class="therapy-options">
+                        <button class="therapy-btn active" onclick="setTherapy('match')" id="btn-match">
+                            <i class="fas fa-equals"></i> Match Vibe
+                        </button>
+                        <button class="therapy-btn" onclick="setTherapy('cheer')" id="btn-cheer">
+                            <i class="fas fa-magic"></i> Cheer Up
+                        </button>
+                    </div>
+                </div>
+
+                <div class="language-selector">
+                    <p class="control-label">Music Preference:</p>
+                    <div class="lang-options">
+                        <button class="lang-btn" onclick="setLang('en')" id="btn-en">English</button>
+                        <button class="lang-btn active" onclick="setLang('mix')" id="btn-mix">Mix</button>
+                        <button class="lang-btn" onclick="setLang('ar')" id="btn-ar">Arabic</button>
+                    </div>
+                </div>
+
+                <button onclick="createPlaylist()" class="spotify-btn" id="btn-generate" disabled style="opacity: 0.5; cursor: not-allowed;">
+                    <i class="fab fa-spotify" style="font-size: 1.4em;"></i> Generate Playlist
+                </button>
+                
+                <div id="result-area"></div>
+            </div>
+        </div>
+    </section>
+
+    <div id="snapModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color: var(--primary); margin-bottom: 15px;">Your AI Vibe Card 📸</h3>
+            <img id="snapImage" class="snapshot-img" src="" alt="Snapshot">
+            <div class="modal-btns">
+                <a id="downloadLink" href="#" download="mood_vibe.jpg" class="btn-download">
+                    <i class="fas fa-download"></i> Save Image
+                </a>
+                <button onclick="closeModal()" class="btn-close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = 'mix';
+        let currentTherapy = 'match';
+        let isCameraRunning = false; // متغير لحفظ حالة الكاميرا
+
+        const videoFeed = document.getElementById('video-feed');
+        const cameraOverlay = document.getElementById('camera-overlay');
+        const btnToggle = document.getElementById('btn-toggle'); // الزرار الموحد
+        const btnSnap = document.getElementById('btn-snap'); 
+        const statusDiv = document.getElementById('status');
+        const btnGenerate = document.getElementById('btn-generate');
+        const snapModal = document.getElementById('snapModal');
+        const snapImage = document.getElementById('snapImage');
+        const downloadLink = document.getElementById('downloadLink');
+
+        // دالة التبديل (Toggle)
+        function toggleCamera() {
+            if (!isCameraRunning) {
+                startCamera();
+            } else {
+                stopCamera();
+            }
+        }
+
+        function startCamera() {
+            isCameraRunning = true;
+            videoFeed.src = "{{ url_for('video_feed') }}";
+            videoFeed.classList.add('active');
+            cameraOverlay.style.opacity = '0'; 
+            setTimeout(() => { cameraOverlay.style.display = 'none'; }, 500); 
+            
+            // تغيير شكل الزرار لـ STOP
+            btnToggle.innerHTML = '<i class="fas fa-stop"></i> Stop';
+            btnToggle.classList.add('running'); // كلاس عشان نغير اللون للأحمر
+            
+            // نخفي السناب شوت لو بدأنا جلسة جديدة
+            btnSnap.style.display = 'none';
+
+            statusDiv.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Initializing AI Engine...';
+            statusDiv.style.color = "#ffff00"; 
+            
+            setTimeout(() => {
+                statusDiv.innerText = "Scanning your mood...";
+                statusDiv.style.color = "#fff";
+                btnGenerate.disabled = false;
+                btnGenerate.style.opacity = "1";
+                btnGenerate.style.cursor = "pointer";
+            }, 3000); 
+        }
+
+        function stopCamera() {
+            isCameraRunning = false;
+            videoFeed.src = "";
+            videoFeed.classList.remove('active');
+            cameraOverlay.style.display = 'flex';
+            setTimeout(() => { cameraOverlay.style.opacity = '1'; }, 10); 
+            
+            // إرجاع شكل الزرار لـ START
+            btnToggle.innerHTML = '<i class="fas fa-play"></i> Start Experience';
+            btnToggle.classList.remove('running');
+            
+            // نخفي السناب شوت لما نقفل الكاميرا
+            btnSnap.style.display = 'none';
+            
+            statusDiv.innerText = "Camera paused.";
+            statusDiv.style.color = "#aaa";
+
+            btnGenerate.disabled = true;
+            btnGenerate.style.opacity = "0.5";
+            btnGenerate.style.cursor = "not-allowed";
+        }
+
+        function takeSnapshot() {
+            const timestamp = new Date().getTime();
+            const imgUrl = `/snapshot?t=${timestamp}`;
+            snapImage.src = imgUrl;
+            downloadLink.href = imgUrl;
+            snapModal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            snapModal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == snapModal) {
+                snapModal.style.display = "none";
+            }
+        }
+
+        function setLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + lang).classList.add('active');
+        }
+
+        function setTherapy(mode) {
+            currentTherapy = mode;
+            document.querySelectorAll('.therapy-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('btn-' + mode).classList.add('active');
+        }
+
+        function createPlaylist() {
+            const resultArea = document.getElementById('result-area');
+            statusDiv.innerHTML = '<i class="fas fa-compact-disc fa-spin"></i> Analyzing & Generating Story...';
+            statusDiv.style.color = "#ffff00";
+
+            fetch('/create_playlist_api', { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ language: currentLang, therapy_mode: currentTherapy }) 
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    statusDiv.innerText = `Mood Detected: ${data.mood}`;
+                    statusDiv.style.color = "#00ffcc";
+                    
+                    // ✅ هنا بس بيظهر زرار السناب شوت
+                    btnSnap.style.display = 'flex';
+                    btnSnap.style.animation = "pulseGlow 1s infinite"; 
+                    setTimeout(() => { btnSnap.style.animation = "none"; }, 3000);
+
+                    resultArea.innerHTML = `
+                        <a href="${data.url}" target="_blank" class="playlist-success">
+                            <i class="fab fa-spotify"></i> Open ${data.mood} Playlist
+                        </a>`;
+                } else {
+                    statusDiv.innerText = "Error creating playlist.";
+                    statusDiv.style.color = "#ff4444";
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                statusDiv.innerText = "Connection Error.";
+            });
+        }
+    </script>
+</body>
+</html>
